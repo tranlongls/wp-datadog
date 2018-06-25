@@ -60,6 +60,9 @@ class Tracer
             'duration_micro' => '-',
             'parent_id_hex' => '-'
         ];
+        if($span['meta']){
+            $arraySpan['meta'] = $span['meta'];
+        }
         return $arraySpan;
     }
     /**
@@ -92,7 +95,7 @@ class Tracer
 
     public function sendRequest($headers = [])
     {
-    	$body = $this->export();
+    	$body = $this->export(); 
     	$host = $this->host;
     	$port = $this->port;
     	$url = "$host:$port/v0.3/traces";

@@ -6,6 +6,7 @@ class Span
     protected $name;
 	protected $start;
 	protected $resource;
+    protected $tags;
 	
 	public function __construct(array $config = array())
     {
@@ -13,6 +14,7 @@ class Span
         $this->start = isset($config['start']) ? (int)$config['start'] : $this->now();
         $this->name = isset($config['name']) ? $config['name'] : "web.request";
         $this->resource = isset($config['resource']) ? $config['resource'] : $_SERVER['REQUEST_URI'];
+        $this->tags = [];
     }
 
     public function now()
@@ -42,6 +44,9 @@ class Span
             'duration' => $this->duration,
             'parent_id' => 0
         ];
+        if(count($this->tags)){
+            $result['meta'] = $this->tags;
+        }
         return $result;
     }
 
@@ -50,5 +55,15 @@ class Span
             $finishTime = $this->now();
         }
         $this->duration = $finishTime - $this->start;
+    }
+
+    public function setMeta($key, $value){
+        $this->tags[$key] = (string)$value;
+    }
+
+    public function setHttpObj($httpObj){
+        foreach ($httpObj as $key => $value) {
+            $this->setMeta("http.".$key, $value);
+        }
     }
 }

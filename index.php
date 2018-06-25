@@ -53,6 +53,15 @@ function datadogFinish() {
  			"start" => ($_SERVER['REQUEST_TIME_FLOAT'] * 1000 * 1000),
  			"resource" => $resource
  		]);
+ 		$baseUrl = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://".$_SERVER['HTTP_HOST'];
+ 		$method = $_SERVER['REQUEST_METHOD'];
+ 		$httpObj = [
+ 			"base_url" => $baseUrl,
+ 			"url" => $_SERVER['REQUEST_URI'],
+ 			"method" => $method,
+ 			"status_code" => http_response_code()
+ 		];
+ 		$span->setHttpObj($httpObj);
 
  		$span->finish();
  		$tracer->flush($span->export());
